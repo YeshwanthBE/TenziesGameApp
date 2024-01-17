@@ -11,7 +11,6 @@ export default function App() {
     let dieFaceValue = allDice[0].value;
     if (allDice.every((die) => die.onHold && die.value === dieFaceValue))
       setGameWinCondition(true);
-    console.log(gameWin);
   }, [allDice]);
   function newGame() {}
   function allNewDice() {
@@ -28,15 +27,19 @@ export default function App() {
     <Die die={die} key={die.id} holdDice={() => holdDice(die.id)}></Die>
   ));
   function rollNewDice() {
-    setAllDice((oldAllDice) => {
-      const newDice = allNewDice();
-      return oldAllDice.map((die, index) =>
-        die.onHold ? die : newDice[index]
-      );
-    });
+    if (gameWin) {
+      setGameWinCondition(false);
+      setAllDice(allNewDice);
+    } else {
+      setAllDice((oldAllDice) => {
+        const newDice = allNewDice();
+        return oldAllDice.map((die, index) =>
+          die.onHold ? die : newDice[index]
+        );
+      });
+    }
   }
   function holdDice(id) {
-    console.log(id);
     setAllDice((oldAllDice) =>
       oldAllDice.map((die) =>
         die.id === id ? { ...die, onHold: !die.onHold } : die
